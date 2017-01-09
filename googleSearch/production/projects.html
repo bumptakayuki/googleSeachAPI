@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>shashoku collection</title>
+
+    <!-- Bootstrap -->
+    <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="../vendors/nprogress/nprogress.css" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="../vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="../build/css/custom.min.css" rel="stylesheet">
+
+    <!-- 自分で独自に追加したスタイル -->
+    <link href="../build/css/original.css" rel="stylesheet">
+
+
+    <style>
+        rect.bordered {
+            stroke: #E6E6E6;
+            stroke-width: 2px;
+        }
+
+        text.mono {
+            font-size: 9pt;
+            font-family: Consolas, courier;
+            fill: #aaa;
+        }
+
+        text.axis-workweek {
+            fill: #000;
+        }
+
+        text.axis-worktime {
+            fill: #000;
+        }
+
+        svg {
+            display: block;
+            float: right;
+        }
+
+        d {
+            display: block;
+            float: right;
+        }
+
+        #spin-area {
+            background-color: black;
+        }
+    </style>
+    <script src="http://d3js.org/d3.v3.js"></script>
+
+</head>
+
+<body class="nav-md">
+
+<div class="container body">
+    <div class="main_container">
+        <div class="col-md-3 left_col">
+            <div class="left_col scroll-view">
+                <div class="navbar nav_title" style="border: 0;">
+                    <div class="profile">
+                        <div class="profile_pic">
+                            <img src="images/IMG_1007.png" alt="..." class="img-circle profile_img">
+                        </div>
+                        <div class="profile_info">
+                            <span>Welcome,</span>
+                            <h2>Takayuki Suzuki</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <br/>
+
+                <!-- sidebar menu -->
+                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                    <div class="menu_section">
+                        <ul class="nav side-menu">
+                            <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li><a href="index.html">Dashboard</a></li>
+                                </ul>
+                            </li>
+                            <li><a><i class="fa fa-table"></i> ログ一覧 <span class="fa fa-chevron-down"></span></a>
+                            </li>
+                            <li><a><i class="fa fa-bar-chart-o"></i>分析<span class="fa fa-chevron-down"></span></a>
+                            </li>
+                            <li><a><i class="fa fa-clone"></i>ヘルプ<span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li><a href="fixed_sidebar.html">クーポン承認方法</a></li>
+                                    <li><a href="fixed_footer.html">Q&A</a></li>
+                                    <li><a href="fixed_footer.html">お問い合わせ</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+                <!-- /sidebar menu -->
+
+                <!-- /menu footer buttons -->
+                <div class="sidebar-footer hidden-small">
+                    <a data-toggle="tooltip" data-placement="top" title="Settings">
+                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                    </a>
+                    <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                        <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+                    </a>
+                    <a data-toggle="tooltip" data-placement="top" title="Lock">
+                        <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                    </a>
+                    <a data-toggle="tooltip" data-placement="top" title="Logout">
+                        <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                    </a>
+                </div>
+                <!-- /menu footer buttons -->
+            </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+            <div class="nav_menu">
+                <nav>
+
+                    <div class="nav toggle">
+                        <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                    </div>
+                    <!--<span class="header-logo-area"><img height="70" width="200" src="images/youTube.png"></span>-->
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="">
+                            <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
+                               aria-expanded="false">
+                                <img src="images/IMG_1007.png" alt="">Takayuki Suzuki
+                                <span class=" fa fa-angle-down"></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                <li><a href="javascript:;"> Profile</a></li>
+                                <li>
+                                    <a href="javascript:;">
+                                        <span class="badge bg-red pull-right">50%</span>
+                                        <span>Settings</span>
+                                    </a>
+                                </li>
+                                <li><a href="javascript:;">Help</a></li>
+                                <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                            </ul>
+                        </li>
+
+                        <li role="presentation" class="dropdown">
+                            <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown"
+                               aria-expanded="false">
+                                <i class="fa fa-envelope-o"></i>
+                                <span class="badge bg-green">6</span>
+                            </a>
+                            <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
+                                <li>
+                                    <a>
+                                        <span class="image"><img src="images/img.jpg" alt="Profile Image"/></span>
+                        <span>
+                          <span>John Smith</span>
+                          <span class="time">3 mins ago</span>
+                        </span>
+                        <span class="message">
+                          Film festivals used to be do-or-die moments for movie makers. They were where...
+                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a>
+                                        <span class="image"><img src="images/img.jpg" alt="Profile Image"/></span>
+                        <span>
+                          <span>John Smith</span>
+                          <span class="time">3 mins ago</span>
+                        </span>
+                        <span class="message">
+                          Film festivals used to be do-or-die moments for movie makers. They were where...
+                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a>
+                                        <span class="image"><img src="images/img.jpg" alt="Profile Image"/></span>
+                        <span>
+                          <span>John Smith</span>
+                          <span class="time">3 mins ago</span>
+                        </span>
+                        <span class="message">
+                          Film festivals used to be do-or-die moments for movie makers. They were where...
+                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a>
+                                        <span class="image"><img src="images/img.jpg" alt="Profile Image"/></span>
+                        <span>
+                          <span>John Smith</span>
+                          <span class="time">3 mins ago</span>
+                        </span>
+                        <span class="message">
+                          Film festivals used to be do-or-die moments for movie makers. They were where...
+                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <div class="text-center">
+                                        <a>
+                                            <strong>See All Alerts</strong>
+                                            <i class="fa fa-angle-right"></i>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <!-- /top navigation -->
+
+        <div class="clearfix"></div>
+
+        <!-- page content -->
+        <div class="right_col" role="main">
+            <div class="">
+
+                <div class="title_left">
+                    <h3>Google 検索順位チェックツール</h3>
+                </div>
+                キーワード:
+                <input type="text" style="width: 300px; display: inline " id="keyword" class="form-control">
+                <button type="button" id="search" class="btn btn-primary">検索</button>
+                <button type="button" class="btn btn-success">CSVダウンロード</button>
+                <div id="spin-area"></div>
+
+                <!-- TODO -->
+                <div id="main-area">
+
+                    <div id="search-area"></div>
+                    <div id="comment-area" style="overflow: auto; height: 400px"></div>
+                    <div class="clearfix"></div>
+                    <div class='col-md-12 col-sm-12 col-xs-12'>
+                        <div class='x_panel tile fixed_height_350 overflow_hidden'>
+                            <div id='analytics-area'>
+                                <!--<svg></svg>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class='col-md-12 col-sm-12 col-xs-12'>
+                        <div class='x_panel tile fixed_height_350 overflow_hidden'>
+                        <div id="chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+
+    </div>
+</div>
+<!-- /page content -->
+
+<!-- footer content -->
+<footer>
+    <div class="pull-right">
+        Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
+    </div>
+    <div class="clearfix"></div>
+</footer>
+<!-- /footer content -->
+</div>
+</div>
+
+<!-- jQuery -->
+<script src="../vendors/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- FastClick -->
+<script src="../vendors/fastclick/lib/fastclick.js"></script>
+<!-- NProgress -->
+<script src="../vendors/nprogress/nprogress.js"></script>
+<!-- bootstrap-progressbar -->
+<script src="../vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+
+<!-- Flot -->
+<script src="../vendors/Flot/jquery.flot.js"></script>
+<script src="../vendors/Flot/jquery.flot.pie.js"></script>
+<script src="../vendors/Flot/jquery.flot.time.js"></script>
+<script src="../vendors/Flot/jquery.flot.stack.js"></script>
+<script src="../vendors/Flot/jquery.flot.resize.js"></script>
+
+<!-- Custom Theme Scripts -->
+<script src="../build/js/custom.min.js"></script>
+
+
+<!-- Flot -->
+<script src="../vendors/Flot/jquery.flot.js"></script>
+<script src="../vendors/Flot/jquery.flot.pie.js"></script>
+<script src="../vendors/Flot/jquery.flot.time.js"></script>
+<script src="../vendors/Flot/jquery.flot.stack.js"></script>
+<script src="../vendors/Flot/jquery.flot.resize.js"></script>
+<!-- Flot plugins -->
+<script src="../vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
+<script src="../vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
+<script src="../vendors/flot.curvedlines/curvedLines.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+<script src="./js/d3.layout.cloud.js"></script>
+<script src="./js/spin.min.js"></script>
+<script src="./js/heatMap.js"></script>
+<script src="./js/movieList.js"></script>
+
+<script>
+    var createKeyword = function (csvFile) {
+
+        d3.csv(csvFile,
+                function (data) {
+
+                    console.log(data);
+                    var h = 1300;
+                    var w = 900;
+                    data = data.splice(0, 1200); //処理wordを1200件に絞る
+
+                    var random = d3.random.irwinHall(2)
+
+                    var countMax = d3.max(data, function (d) {
+                        return d.count
+                    });
+                    var sizeScale = d3.scale.linear().domain([0, countMax]).range([10, 100])
+                    var colorScale = d3.scale.category20();
+
+                    var words = data.map(function (d) {
+                        return {
+                            text: d.word,
+                            size: sizeScale(d.count) //頻出カウントを文字サイズに反映
+                        };
+                    });
+
+                    d3.layout.cloud().size([w, h])
+                            .words(words)
+                            .rotate(function () {
+                                return Math.round(1 - random()) * 90;
+                            }) //ランダムに文字を90度回転
+                            .font("Impact")
+                            .fontSize(function (d) {
+                                return d.size;
+                            })
+                            .on("end", draw) //描画関数の読み込み
+                            .start();
+
+                    //wordcloud 描画
+                    function draw(words) {
+                        d3.select("svg")
+                                .attr({
+                                    "width": w,
+                                    "height": h
+                                })
+                                .append("g")
+                                .attr("transform", "translate(400,300)")
+                                .selectAll("text")
+                                .data(words)
+                                .enter()
+                                .append("text")
+                                .style({
+                                    "font-family": "Impact",
+                                    "font-size": function (d) {
+                                        return d.size + "px";
+                                    },
+                                    "fill": function (d, i) {
+                                        return colorScale(i);
+                                    }
+                                })
+                                .attr({
+                                    "text-anchor": "middle",
+                                    "transform": function (d) {
+                                        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                                    }
+                                })
+                                .text(function (d) {
+                                    return d.text;
+                                });
+                    }
+
+                });
+    }
+</script>
+
+
+<script type="text/javascript">
+    //    var margin = {top: 50, right: 0, bottom: 100, left: 30},
+    //            width = 960 - margin.left - margin.right,
+    //            height = 440 - margin.top - margin.bottom,
+    //            gridSize = Math.floor(width / 24),
+    //            legendElementWidth = gridSize * 2,
+    //            buckets = 9,
+    //            colors = ["#ffffd9", "#edf8b1", "#c7e9b4", "#7fcdbb", "#41b6c4", "#1d91c0", "#225ea8", "#253494", "#081d58"], // alternatively colorbrewer.YlGnBu[9]
+    //            days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+    //            times = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"];
+    //    datasets = ["data.tsv", "data2.tsv"];
+    //
+    //    var svg = d3.select("#chart").append("svg")
+    //            .attr("width", width + margin.left + margin.right)
+    //            .attr("height", height + margin.top + margin.bottom)
+    //            .append("g")
+    //            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    //
+    //    var dayLabels = svg.selectAll(".dayLabel")
+    //            .data(days)
+    //            .enter().append("text")
+    //            .text(function (d) {
+    //                return d;
+    //            })
+    //            .attr("x", 0)
+    //            .attr("y", function (d, i) {
+    //                return i * gridSize;
+    //            })
+    //            .style("text-anchor", "end")
+    //            .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
+    //            .attr("class", function (d, i) {
+    //                return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis");
+    //            });
+    //
+    //    var timeLabels = svg.selectAll(".timeLabel")
+    //            .data(times)
+    //            .enter().append("text")
+    //            .text(function (d) {
+    //                return d;
+    //            })
+    //            .attr("x", function (d, i) {
+    //                return i * gridSize;
+    //            })
+    //            .attr("y", 0)
+    //            .style("text-anchor", "middle")
+    //            .attr("transform", "translate(" + gridSize / 2 + ", -6)")
+    //            .attr("class", function (d, i) {
+    //                return ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis");
+    //            });
+
+    var heatmapChart = function (tsvFile) {
+
+        d3.tsv(tsvFile,
+                function (error, data) {
+
+                    // Ajax通信を開始する
+                    $.ajax({
+                                url: 'http://ec2-52-88-160-219.us-west-2.compute.amazonaws.com/shashoku_collection_restaurant/shashoku_collection_restaurant/production/php/api.php',
+                                type: 'post', // getかpostを指定(デフォルトは前者)
+                                dataType: 'json', // 「json」を指定するとresponseがJSONとしてパースされたオブジェクトになる
+                                data: { // 送信データを指定(getの場合は自動的にurlの後ろにクエリとして付加される)
+                                    age: $('#age').val(),
+                                    job: $('#job').val()
+                                }
+                            })
+                            // ・ステータスコードは正常で、dataTypeで定義したようにパース出来たとき
+                            .done(function (response) {
+                                $('#result').val('成功');
+
+                            })
+                            // ・サーバからステータスコード400以上が返ってきたとき
+                            // ・ステータスコードは正常だが、dataTypeで定義したようにパース出来なかったとき
+                            // ・通信に失敗したとき
+                            .fail(function () {
+                                $('#result').val('失敗');
+                                $('#detail').val('');
+                            });
+
+                    data = [
+                        {"day": 1, "hour": 1, "value": 6},
+                        {"day": 1, "hour": 2, "value": 20},
+                        {
+                            "day": 1,
+                            "hour": 3,
+                            "value": 0
+                        }, {"day": 1, "hour": 4, "value": 0}, {"day": 1, "hour": 5, "value": 0}, {
+                            "day": 1,
+                            "hour": 6,
+                            "value": 2
+                        }, {"day": 1, "hour": 7, "value": 0}, {"day": 1, "hour": 8, "value": 9}, {
+                            "day": 1,
+                            "hour": 9,
+                            "value": 25
+                        }, {"day": 1, "hour": 10, "value": 49}, {"day": 1, "hour": 11, "value": 57}, {
+                            "day": 1,
+                            "hour": 12,
+                            "value": 61
+                        }, {"day": 1, "hour": 13, "value": 37}, {"day": 1, "hour": 14, "value": 66}, {
+                            "day": 1,
+                            "hour": 15,
+                            "value": 70
+                        }, {"day": 1, "hour": 16, "value": 55}, {"day": 1, "hour": 17, "value": 51}, {
+                            "day": 1,
+                            "hour": 18,
+                            "value": 55
+                        }, {"day": 1, "hour": 19, "value": 17}, {"day": 1, "hour": 20, "value": 20}, {
+                            "day": 1,
+                            "hour": 21,
+                            "value": 9
+                        }, {"day": 1, "hour": 22, "value": 4}, {"day": 1, "hour": 23, "value": 0}, {
+                            "day": 1,
+                            "hour": 24,
+                            "value": 12
+                        }, {"day": 2, "hour": 1, "value": 6}, {"day": 2, "hour": 2, "value": 2}, {
+                            "day": 2,
+                            "hour": 3,
+                            "value": 0
+                        }, {"day": 2, "hour": 4, "value": 0}, {"day": 2, "hour": 5, "value": 0}, {
+                            "day": 2,
+                            "hour": 6,
+                            "value": 2
+                        }, {"day": 2, "hour": 7, "value": 4}, {"day": 2, "hour": 8, "value": 11}, {
+                            "day": 2,
+                            "hour": 9,
+                            "value": 28
+                        }, {"day": 2, "hour": 10, "value": 49}, {"day": 2, "hour": 11, "value": 51}, {
+                            "day": 2,
+                            "hour": 12,
+                            "value": 47
+                        }, {"day": 2, "hour": 13, "value": 38}, {"day": 2, "hour": 14, "value": 65}, {
+                            "day": 2,
+                            "hour": 15,
+                            "value": 60
+                        }, {"day": 2, "hour": 16, "value": 50}, {"day": 2, "hour": 17, "value": 65}, {
+                            "day": 2,
+                            "hour": 18,
+                            "value": 50
+                        }, {"day": 2, "hour": 19, "value": 22}, {"day": 2, "hour": 20, "value": 11}, {
+                            "day": 2,
+                            "hour": 21,
+                            "value": 12
+                        }, {"day": 2, "hour": 22, "value": 9}, {"day": 2, "hour": 23, "value": 0}, {
+                            "day": 2,
+                            "hour": 24,
+                            "value": 13
+                        }, {"day": 3, "hour": 1, "value": 5}, {"day": 3, "hour": 2, "value": 8}, {
+                            "day": 3,
+                            "hour": 3,
+                            "value": 8
+                        }, {"day": 3, "hour": 4, "value": 0}, {"day": 3, "hour": 5, "value": 0}, {
+                            "day": 3,
+                            "hour": 6,
+                            "value": 2
+                        }, {"day": 3, "hour": 7, "value": 5}, {"day": 3, "hour": 8, "value": 12}, {
+                            "day": 3,
+                            "hour": 9,
+                            "value": 34
+                        }, {"day": 3, "hour": 10, "value": 43}, {"day": 3, "hour": 11, "value": 54}, {
+                            "day": 3,
+                            "hour": 12,
+                            "value": 44
+                        }, {"day": 3, "hour": 13, "value": 40}, {"day": 3, "hour": 14, "value": 48}, {
+                            "day": 3,
+                            "hour": 15,
+                            "value": 54
+                        }, {"day": 3, "hour": 16, "value": 59}, {"day": 3, "hour": 17, "value": 60}, {
+                            "day": 3,
+                            "hour": 18,
+                            "value": 51
+                        }, {"day": 3, "hour": 19, "value": 21}, {"day": 3, "hour": 20, "value": 16}, {
+                            "day": 3,
+                            "hour": 21,
+                            "value": 9
+                        }, {"day": 3, "hour": 22, "value": 5}, {"day": 3, "hour": 23, "value": 4}, {
+                            "day": 3,
+                            "hour": 24,
+                            "value": 7
+                        }, {"day": 4, "hour": 1, "value": 0}, {"day": 4, "hour": 2, "value": 0}, {
+                            "day": 4,
+                            "hour": 3,
+                            "value": 0
+                        }, {"day": 4, "hour": 4, "value": 0}, {"day": 4, "hour": 5, "value": 0}, {
+                            "day": 4,
+                            "hour": 6,
+                            "value": 2
+                        }, {"day": 4, "hour": 7, "value": 4}, {"day": 4, "hour": 8, "value": 13}, {
+                            "day": 4,
+                            "hour": 9,
+                            "value": 26
+                        }, {"day": 4, "hour": 10, "value": 58}, {"day": 4, "hour": 11, "value": 61}, {
+                            "day": 4,
+                            "hour": 12,
+                            "value": 59
+                        }, {"day": 4, "hour": 13, "value": 53}, {"day": 4, "hour": 14, "value": 54}, {
+                            "day": 4,
+                            "hour": 15,
+                            "value": 64
+                        }, {"day": 4, "hour": 16, "value": 55}, {"day": 4, "hour": 17, "value": 52}, {
+                            "day": 4,
+                            "hour": 18,
+                            "value": 53
+                        }, {"day": 4, "hour": 19, "value": 18}, {"day": 4, "hour": 20, "value": 3}, {
+                            "day": 4,
+                            "hour": 21,
+                            "value": 9
+                        }, {"day": 4, "hour": 22, "value": 12}, {"day": 4, "hour": 23, "value": 2}, {
+                            "day": 4,
+                            "hour": 24,
+                            "value": 8
+                        }, {"day": 5, "hour": 1, "value": 2}, {"day": 5, "hour": 2, "value": 0}, {
+                            "day": 5,
+                            "hour": 3,
+                            "value": 8
+                        }, {"day": 5, "hour": 4, "value": 2}, {"day": 5, "hour": 5, "value": 0}, {
+                            "day": 5,
+                            "hour": 6,
+                            "value": 2
+                        }, {"day": 5, "hour": 7, "value": 4}, {"day": 5, "hour": 8, "value": 14}, {
+                            "day": 5,
+                            "hour": 9,
+                            "value": 31
+                        }, {"day": 5, "hour": 10, "value": 48}, {"day": 5, "hour": 11, "value": 46}, {
+                            "day": 5,
+                            "hour": 12,
+                            "value": 50
+                        }, {"day": 5, "hour": 13, "value": 66}, {"day": 5, "hour": 14, "value": 54}, {
+                            "day": 5,
+                            "hour": 15,
+                            "value": 56
+                        }, {"day": 5, "hour": 16, "value": 67}, {"day": 5, "hour": 17, "value": 54}, {
+                            "day": 5,
+                            "hour": 18,
+                            "value": 23
+                        }, {"day": 5, "hour": 19, "value": 14}, {"day": 5, "hour": 20, "value": 6}, {
+                            "day": 5,
+                            "hour": 21,
+                            "value": 8
+                        }, {"day": 5, "hour": 22, "value": 7}, {"day": 5, "hour": 23, "value": 0}, {
+                            "day": 5,
+                            "hour": 24,
+                            "value": 8
+                        }, {"day": 6, "hour": 1, "value": 2}, {"day": 6, "hour": 2, "value": 0}, {
+                            "day": 6,
+                            "hour": 3,
+                            "value": 2
+                        }, {"day": 6, "hour": 4, "value": 0}, {"day": 6, "hour": 5, "value": 0}, {
+                            "day": 6,
+                            "hour": 6,
+                            "value": 0
+                        }, {"day": 6, "hour": 7, "value": 4}, {"day": 6, "hour": 8, "value": 8}, {
+                            "day": 6,
+                            "hour": 9,
+                            "value": 8
+                        }, {"day": 6, "hour": 10, "value": 6}, {"day": 6, "hour": 11, "value": 14}, {
+                            "day": 6,
+                            "hour": 12,
+                            "value": 12
+                        }, {"day": 6, "hour": 13, "value": 9}, {"day": 6, "hour": 14, "value": 14}, {
+                            "day": 6,
+                            "hour": 15,
+                            "value": 0
+                        }, {"day": 6, "hour": 16, "value": 4}, {"day": 6, "hour": 17, "value": 7}, {
+                            "day": 6,
+                            "hour": 18,
+                            "value": 6
+                        }, {"day": 6, "hour": 19, "value": 0}, {"day": 6, "hour": 20, "value": 0}, {
+                            "day": 6,
+                            "hour": 21,
+                            "value": 0
+                        }, {"day": 6, "hour": 22, "value": 0}, {"day": 6, "hour": 23, "value": 0}, {
+                            "day": 6,
+                            "hour": 24,
+                            "value": 0
+                        }, {"day": 7, "hour": 1, "value": 7}, {"day": 7, "hour": 2, "value": 6}, {
+                            "day": 7,
+                            "hour": 3,
+                            "value": 0
+                        }, {"day": 7, "hour": 4, "value": 0}, {"day": 7, "hour": 5, "value": 0}, {
+                            "day": 7,
+                            "hour": 6,
+                            "value": 0
+                        }, {"day": 7, "hour": 7, "value": 0}, {"day": 7, "hour": 8, "value": 0}, {
+                            "day": 7,
+                            "hour": 9,
+                            "value": 0
+                        }, {"day": 7, "hour": 10, "value": 0}, {"day": 7, "hour": 11, "value": 2}, {
+                            "day": 7,
+                            "hour": 12,
+                            "value": 2
+                        }, {"day": 7, "hour": 13, "value": 5}, {"day": 7, "hour": 14, "value": 6}, {
+                            "day": 7,
+                            "hour": 15,
+                            "value": 0
+                        }, {"day": 7, "hour": 16, "value": 4}, {"day": 7, "hour": 17, "value": 0}, {
+                            "day": 7,
+                            "hour": 18,
+                            "value": 2
+                        }, {"day": 7, "hour": 19, "value": 10}, {"day": 7, "hour": 20, "value": 7}, {
+                            "day": 7,
+                            "hour": 21,
+                            "value": 0
+                        }, {"day": 7, "hour": 22, "value": 19}, {"day": 7, "hour": 23, "value": 9}, {
+                            "day": 7,
+                            "hour": 24,
+                            "value": 4
+                        }];
+
+                    var colorScale = d3.scale.quantile()
+                            .domain([0, buckets - 1, d3.max(data, function (d) {
+                                return d.value;
+                            })])
+                            .range(colors);
+
+                    var cards = svg.selectAll(".hour")
+                            .data(data, function (d) {
+                                return d.day + ':' + d.hour;
+                            });
+
+                    cards.append("title");
+
+                    cards.enter().append("rect")
+                            .attr("x", function (d) {
+                                return (d.hour - 1) * gridSize;
+                            })
+                            .attr("y", function (d) {
+                                return (d.day - 1) * gridSize;
+                            })
+                            .attr("rx", 4)
+                            .attr("ry", 4)
+                            .attr("class", "hour bordered")
+                            .attr("width", gridSize)
+                            .attr("height", gridSize)
+                            .style("fill", colors[0]);
+
+                    cards.transition().duration(1000)
+                            .style("fill", function (d) {
+                                return colorScale(d.value);
+                            });
+
+                    cards.select("title").text(function (d) {
+                        return d.value;
+                    });
+
+                    cards.exit().remove();
+
+                    var legend = svg.selectAll(".legend")
+                            .data([0].concat(colorScale.quantiles()), function (d) {
+                                return d;
+                            });
+
+                    legend.enter().append("g")
+                            .attr("class", "legend");
+
+                    legend.append("rect")
+                            .attr("x", function (d, i) {
+                                return legendElementWidth * i;
+                            })
+                            .attr("y", height)
+                            .attr("width", legendElementWidth)
+                            .attr("height", gridSize / 2)
+                            .style("fill", function (d, i) {
+                                return colors[i];
+                            });
+
+                    legend.append("text")
+                            .attr("class", "mono")
+                            .text(function (d) {
+                                return "≥ " + Math.round(d);
+                            })
+                            .attr("x", function (d, i) {
+                                return legendElementWidth * i;
+                            })
+                            .attr("y", height + gridSize);
+
+                    legend.exit().remove();
+
+                });
+    };
+
+    //    heatmapChart(datasets[0]);
+
+    //    var datasetpicker = d3.select("#dataset-picker").selectAll(".dataset-button")
+    //            .data(datasets);
+    //
+    //    datasetpicker.enter()
+    //            .append("input")
+    //            .attr("value", function (d) {
+    //                return "Dataset " + d
+    //            })
+    //            .attr("type", "button")
+    //            .attr("class", "dataset-button")
+    //            .on("click", function (d) {
+    //                heatmapChart(d);
+    //            });
+
+    //    createKeyword('test.csv');
+</script>
+
+
+</body>
+</html>
