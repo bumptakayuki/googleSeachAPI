@@ -4,6 +4,7 @@ $(function () {
 
         var query = {
             keyword: $('#keyword').val(),
+            area: $('#area').val(),
             method: 'getMovieList'
         };
         movieSearch(query);
@@ -95,7 +96,7 @@ $(function () {
     var movieSearch = function (query) {
 
         $.ajax({
-                url: 'http://localhost:8888/googleSearch/production/api.php',
+                url: '/googleSeachAPI/googleSearch/production/api.php',
                 type: 'post', // getかpostを指定(デフォルトは前者)
                 dataType: 'json', // 「json」を指定するとresponseがJSONとしてパースされたオブジェクトになる
                 data: { // 送信データを指定(getの場合は自動的にurlの後ろにクエリとして付加される)
@@ -194,7 +195,7 @@ $(function () {
 
                 // Ajax通信を開始する
                 $.ajax({
-                        url: 'http://localhost:8888/googleSearch/production/api.php',
+                        url: '/googleSeachAPI/googleSearch/production/api.php',
                         type: 'post', // getかpostを指定(デフォルトは前者)
                         dataType: 'json', // 「json」を指定するとresponseがJSONとしてパースされたオブジェクトになる
                         data: { // 送信データを指定(getの場合は自動的にurlの後ろにクエリとして付加される)

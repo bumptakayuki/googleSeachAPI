@@ -14,13 +14,13 @@ class GoogleSearch
      * @param $keyword
      * @return $resultList
      */
-    public function search($keyword)
+    public function search($keyword,$area)
     {
         //文字化け対策
         mb_language('Japanese');
 
         //検索アドレスと件数の指定
-        $urlStr = 'http://www.google.co.jp/search?num=7&ie=UTF-8&q=' . urlencode($keyword);
+        $urlStr = 'http://www.google.co.jp/search?num=7&ie=UTF-8&q=' . urlencode($keyword).'&uule='.$area;
 
         //URLからDOMを取得
         $html = file_get_html($urlStr);

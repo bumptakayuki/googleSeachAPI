@@ -10,7 +10,9 @@ if ($query['method'] === 'getMovieList') {
 
     $googleSearch = new GoogleSearch();
     $keyword = $query['keyword'];
-    $data = $googleSearch->search($keyword);
+    $area = $query['area'];
+
+    $data = $googleSearch->search($keyword,$area);
 
 } else if ($query['method'] === 'getComment') {
     $googleSearch = new GoogleSearch();
