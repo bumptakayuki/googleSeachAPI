@@ -1,5 +1,29 @@
 $(function () {
 
+    $('#download').click(function () {
+
+            var bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+
+            // (2) CSV データの用意
+            var csv_data =
+                window.resultList
+                    .map(function (l) {
+                return l.join(',')
+            }).join('\r\n');
+
+            var blob = new Blob([bom, csv_data], {"type": "text/csv"});
+
+            if (window.navigator.msSaveBlob) {
+                window.navigator.msSaveBlob(blob, "test.csv");
+
+                // msSaveOrOpenBlobの場合はファイルを保存せずに開ける
+                window.navigator.msSaveOrOpenBlob(blob, "test.csv");
+            } else {
+                document.getElementById("download").href = window.URL.createObjectURL(blob);
+            }
+
+    });
+
     $('#search').click(function () {
 
         var query = {
@@ -11,7 +35,7 @@ $(function () {
 
     });
 
-    var createKeyword = function (csvFile,response) {
+    var createKeyword = function (csvFile, response) {
 
         d3.csv(csvFile,
             function (data) {
@@ -23,7 +47,9 @@ $(function () {
                 d3.select("#analytics-area").append("svg");
                 data = response['wordList'];
                 console.log(data);
-                var data = Object.keys(data).map(function (key) {return data[key]});
+                var data = Object.keys(data).map(function (key) {
+                    return data[key]
+                });
 
 
                 var h = 800;
@@ -105,7 +131,13 @@ $(function () {
             })
             // ・ステータスコードは正常で、dataTypeで定義したようにパース出来たとき
             .done(function (response) {
-                console.log(response);
+
+                window.resultList=[];
+                window.resultList.push(['順位','見出し','URL']);
+                _.each(response.searchList, function (elm, i) {
+                    window.resultList.push([elm.rank, elm.title, elm.url]);
+                });
+
                 $('#chart').empty();
                 $('#comment-area').empty();
                 $('#search-area').empty();
@@ -130,12 +162,12 @@ $(function () {
                     + "<h5><%= searchResult.title %> </h5>"
                     + "<div class='clearfix'></div>"
                     + "</div>"
-                    + "<a href='"+'<%= searchResult.url %>'+"'>"
+                    + "<a href='" + '<%= searchResult.url %>' + "'>"
                     + "<%= searchResult.url %>"
                     + "</a>"
                     + "<p><%= searchResult.description %> </p>"
-                    + "<input type='hidden' id='url' value='"+'<%= searchResult.url %>'+"'>"
-                    + "<button type='button' class='btn btn-success getComment'value='"+'<%= searchResult.url %>'+"'>分析する</button>"
+                    + "<input type='hidden' id='url' value='" + '<%= searchResult.url %>' + "'>"
+                    + "<button type='button' class='btn btn-success getComment'value='" + '<%= searchResult.url %>' + "'>分析する</button>"
                     + "</div>"
                     + "</div>"
                     + "<% }); %>"
@@ -146,24 +178,24 @@ $(function () {
                     + "</tr>"
                     + "</thead>"
                     + "<% _.each(response.searchList, function(searchResult) { %>"
-                        + "<tr>"
-                            + " <td><%= searchResult.rank %> </td>"
-                            + "<% if(!_.isEmpty(searchResult.childList)){ %>"
-                                + " <td><%= searchResult.childList.keywords %> </td>"
-                                + " <td><%= searchResult.childList.description %> </td>"
-                                + " <td><%= searchResult.childList.innerLickCount %> </td>"
-                                + " <td><%= searchResult.childList.outLickCount %> </td>"
-                    //+ " <td><%= searchResult.rank1.word %> </td>"
-                    //+ " <td><%= searchResult.rank1.count %> </td>"
-                    //+ " <td><%= searchResult.rank2.word %> </td>"
-                    //+ " <td><%= searchResult.rank2.count %> </td>"
-                    //+ " <td><%= searchResult.rank3.word %> </td>"
-                    //+ " <td><%= searchResult.rank3.count %> </td>"
+                    + "<tr>"
+                    + " <td><%= searchResult.rank %> </td>"
+                    + "<% if(!_.isEmpty(searchResult.childList)){ %>"
+                    + " <td><%= searchResult.childList.keywords %> </td>"
+                    + " <td><%= searchResult.childList.description %> </td>"
+                    + " <td><%= searchResult.childList.innerLickCount %> </td>"
+                    + " <td><%= searchResult.childList.outLickCount %> </td>"
+                        //+ " <td><%= searchResult.rank1.word %> </td>"
+                        //+ " <td><%= searchResult.rank1.count %> </td>"
+                        //+ " <td><%= searchResult.rank2.word %> </td>"
+                        //+ " <td><%= searchResult.rank2.count %> </td>"
+                        //+ " <td><%= searchResult.rank3.word %> </td>"
+                        //+ " <td><%= searchResult.rank3.count %> </td>"
 
                     + "<% }; %>"
-                        + "</tr>"
+                    + "</tr>"
                     + "<% }); %>"
-                    +"<table>"
+                    + "<table>"
                 );
 
                 $("#search-area").html(compiled({response: response}));
@@ -182,15 +214,15 @@ $(function () {
             });
     }
 
-    var getComment = function(url) {
+    var getComment = function (url) {
 
         d3.tsv(url,
-            function(error, data) {
+            function (error, data) {
 
                 console.log(url);
                 var query = {
-                    url:url,
-                    method:'getComment'
+                    url: url,
+                    method: 'getComment'
                 };
 
                 // Ajax通信を開始する
@@ -221,33 +253,33 @@ $(function () {
                             + "</thead>"
                             + "<tr>"
 
-                            //+ "<% if(!_.isEmpty(response.title)){ %>"
+                                //+ "<% if(!_.isEmpty(response.title)){ %>"
                             + " <td><%= response.keywords %> </td>"
-                            //+ "<% } %>"
+                                //+ "<% } %>"
 
-                            //+ "<% if(!_.isEmpty(response.description)){ %>"
+                                //+ "<% if(!_.isEmpty(response.description)){ %>"
                             + " <td><%= response.description %> </td>"
-                            //+ "<% } %>"
+                                //+ "<% } %>"
 
-                            //+ "<% if(!_.isEmpty(response.innerLickCount)){ %>"
+                                //+ "<% if(!_.isEmpty(response.innerLickCount)){ %>"
                             + " <td><%= response.innerLickCount %> </td>"
-                            //+ "<% } %>"
+                                //+ "<% } %>"
 
-                            //+ "<% if(!_.isEmpty(response.outLickCount)){ %>"
+                                //+ "<% if(!_.isEmpty(response.outLickCount)){ %>"
                             + " <td><%= response.outLickCount %> </td>"
-                            //+ "<% } %>"
-                                + " <td><%= response.rank1.word %> </td>"
-                                + " <td><%= response.rank1.count %> </td>"
-                                + " <td><%= response.rank2.word %> </td>"
-                                + " <td><%= response.rank2.count %> </td>"
-                                + " <td><%= response.rank3.word %> </td>"
-                                + " <td><%= response.rank3.count %> </td>"
+                                //+ "<% } %>"
+                            + " <td><%= response.rank1.word %> </td>"
+                            + " <td><%= response.rank1.count %> </td>"
+                            + " <td><%= response.rank2.word %> </td>"
+                            + " <td><%= response.rank2.count %> </td>"
+                            + " <td><%= response.rank3.word %> </td>"
+                            + " <td><%= response.rank3.count %> </td>"
                             + "</tr>"
-                            +"<table>"
+                            + "<table>"
                         );
                         $("#comment-area").html(compiled({response: response}));
 
-                        createKeyword('test.csv',response);
+                        createKeyword('test.csv', response);
                     })
                     .fail(function (response) {
                         alert('コメントがありません。');

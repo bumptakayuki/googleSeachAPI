@@ -20,7 +20,7 @@ class GoogleSearch
         mb_language('Japanese');
 
         //検索アドレスと件数の指定
-        $urlStr = 'http://www.google.co.jp/search?num=7&ie=UTF-8&q=' . urlencode($keyword).'&uule='.$area;
+        $urlStr = 'http://www.google.co.jp/search?num=11&ie=UTF-8&q=' . urlencode($keyword).'&uule='.$area;
 
         //URLからDOMを取得
         $html = file_get_html($urlStr);
