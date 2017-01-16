@@ -1,5 +1,49 @@
 $(function () {
 
+    var data;
+
+    function handleFileSelect(evt) {
+        var file = evt.target.files[0];
+
+        Papa.parse(file, {
+            header: true,
+            dynamicTyping: true,
+            complete: function(results) {
+
+                var keywordList = [];
+                _.each(results.data, function(obj) {
+                    keywordList.push(obj.keyword);
+                 });
+
+                window.keywordList = keywordList;
+
+                // テンプレートを定義
+                var compiled = _.template(
+                    "<table id='datatable' class='table table-striped table-bordered dataTable no-footer'>"
+                    + "<thead>"
+                    + "<tr role='row' bgColor='gray' style='color: white'>"
+                    + "<th>No.</th><th>検索キーワード</th>"
+                    + "</tr>"
+                    + "</thead>"
+                    + "<% _.each(data, function(obj,i) { %>"
+                    + "<tr>"
+                    + " <td width='140'><%= i+1 %> </td>"
+                    + " <td width='140'><%= obj.keyword %> </td>"
+                    + "</tr>"
+                    + "<% }); %>"
+                    + "<table>"
+                );
+
+                $("#keyword-list").html(compiled({data: results.data}));
+            }
+        });
+    }
+
+    $(document).ready(function(){
+        $("#csv-file").change(handleFileSelect);
+    });
+
+
     $('#download').click(function () {
 
             var bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
@@ -21,17 +65,72 @@ $(function () {
             } else {
                 document.getElementById("download").href = window.URL.createObjectURL(blob);
             }
-
     });
+
+    $('#format-download').click(function () {
+
+        var bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+
+        // (2) CSV データの用意
+        var csv_data =
+            [
+                ['No','keyword'],
+                ['1','日本'],
+                ['2','中国'],
+                ['3','テレビ'],
+                ['4','美容'],
+                ['5','エステ'],
+                ['6','脱毛'],
+                ['7','サロン'],
+                ['8','映画'],
+                ['9','祭り'],
+                ['10','観光']
+            ]
+                .map(function (l) {
+                    return l.join(',')
+                }).join('\r\n');
+
+        var blob = new Blob([bom, csv_data], {"type": "text/csv"});
+
+        if (window.navigator.msSaveBlob) {
+            window.navigator.msSaveBlob(blob, "keyword_format.csv");
+
+            // msSaveOrOpenBlobの場合はファイルを保存せずに開ける
+            window.navigator.msSaveOrOpenBlob(blob, "keyword_format.csv");
+        } else {
+            document.getElementById("format-download").href = window.URL.createObjectURL(blob);
+        }
+    });
+
 
     $('#search').click(function () {
 
         var query = {
             keyword: $('#keyword').val(),
             area: $('#area').val(),
-            method: 'getMovieList'
+            searchCount: $('#searchCount').val(),
+            method: 'search'
         };
-        movieSearch(query);
+        window.resultList=[];
+        executeSearch(query);
+    });
+
+    $('#bulk-search').click(function () {
+
+
+        window.resultList=[];
+
+        var query = {
+            //keyword: $('#keyword').val(),
+            area: $('#area').val(),
+            searchCount: $('#searchCount').val(),
+            method: 'bulkSearch'
+        };
+
+        _.each(window.keywordList, function(keyword) {
+            query.keyword=keyword;
+            executeSearch(query);
+        });
 
     });
 
@@ -119,7 +218,7 @@ $(function () {
             });
     }
 
-    var movieSearch = function (query) {
+    var executeSearch = function (query) {
 
         $.ajax({
                 url: '/googleSeachAPI/googleSearch/production/api.php',
@@ -132,20 +231,14 @@ $(function () {
             // ・ステータスコードは正常で、dataTypeで定義したようにパース出来たとき
             .done(function (response) {
 
-                window.resultList=[];
-                window.resultList.push(['順位','見出し','URL']);
+                window.resultList.push(['検索キーワード','順位','見出し','URL']);
                 _.each(response.searchList, function (elm, i) {
-                    window.resultList.push([elm.rank, elm.title, elm.url]);
+                    window.resultList.push([response.searchKeyword,elm.rank, elm.title, elm.url]);
                 });
 
                 $('#chart').empty();
                 $('#comment-area').empty();
-                $('#search-area').empty();
                 $("#analytics-area").empty();
-
-                //_.each(response.searchList, function(searchResult) {
-                //    console.log(searchResult.childList.outLickCount);
-                //});
 
                 // テンプレートを定義
                 var compiled = _.template(
@@ -154,52 +247,27 @@ $(function () {
                     + "<span class='count_bottom'> </div> <div class='col-md-2 col-sm-4 col-xs-6 tile_stats_count'>"
                     + "<span class='count_bottom'></div>"
                     + "<div class='clearfix'></div>"
-                    + "<% _.each(response.searchList, function(searchResult) { %>"
-                    + "<div class='col-md-4 col-sm-4 col-xs-12'>"
-                    + "<div class='x_panel tile fixed_height_350 overflow_hidden'>"
-                    + "<div class='x_title'>"
-                    + "<h2><%= searchResult.rank %> 位</h2><br>"
-                    + "<h5><%= searchResult.title %> </h5>"
-                    + "<div class='clearfix'></div>"
-                    + "</div>"
-                    + "<a href='" + '<%= searchResult.url %>' + "'>"
-                    + "<%= searchResult.url %>"
-                    + "</a>"
-                    + "<p><%= searchResult.description %> </p>"
-                    + "<input type='hidden' id='url' value='" + '<%= searchResult.url %>' + "'>"
-                    + "<button type='button' class='btn btn-success getComment'value='" + '<%= searchResult.url %>' + "'>分析する</button>"
-                    + "</div>"
-                    + "</div>"
-                    + "<% }); %>"
+
                     + "<table id='datatable' class='table table-striped table-bordered dataTable no-footer'>"
                     + "<thead>"
-                    + "<tr role='row'>"
-                    + "<th>No1</th><th>タイトル</th><th>ディスクリプション</th><th>内部リンク数</th><th>外部リンク数</th>"
+                    + "<tr role='row' bgColor='gray' style='color: white'>"
+                    + "<th>検索キーワード</th><th>順位</th><th>タイトル</th><th>説明</th><th>URL</th>"
                     + "</tr>"
                     + "</thead>"
                     + "<% _.each(response.searchList, function(searchResult) { %>"
                     + "<tr>"
+                    + " <td width='140'><%= response.searchKeyword %> </td>"
                     + " <td><%= searchResult.rank %> </td>"
-                    + "<% if(!_.isEmpty(searchResult.childList)){ %>"
-                    + " <td><%= searchResult.childList.keywords %> </td>"
-                    + " <td><%= searchResult.childList.description %> </td>"
-                    + " <td><%= searchResult.childList.innerLickCount %> </td>"
-                    + " <td><%= searchResult.childList.outLickCount %> </td>"
-                        //+ " <td><%= searchResult.rank1.word %> </td>"
-                        //+ " <td><%= searchResult.rank1.count %> </td>"
-                        //+ " <td><%= searchResult.rank2.word %> </td>"
-                        //+ " <td><%= searchResult.rank2.count %> </td>"
-                        //+ " <td><%= searchResult.rank3.word %> </td>"
-                        //+ " <td><%= searchResult.rank3.count %> </td>"
-
-                    + "<% }; %>"
+                    + " <td><%= searchResult.title %> </td>"
+                    + " <td><%= searchResult.description %> </td>"
+                    + " <td><%= searchResult.url %> </td>"
                     + "</tr>"
                     + "<% }); %>"
                     + "<table>"
                 );
 
-                $("#search-area").html(compiled({response: response}));
-                //createKeyword('test.csv',response);
+                $("#search-area").append(compiled({response: response}));
+
 
                 $('.getComment').click(function (data) {
                     getComment($(data.currentTarget).val());

@@ -14,13 +14,13 @@ class GoogleSearch
      * @param $keyword
      * @return $resultList
      */
-    public function search($keyword,$area)
+    public function search($keyword,$area,$searchCount)
     {
         //文字化け対策
         mb_language('Japanese');
 
         //検索アドレスと件数の指定
-        $urlStr = 'http://www.google.co.jp/search?num=11&ie=UTF-8&q=' . urlencode($keyword).'&uule='.$area;
+        $urlStr = 'http://www.google.co.jp/search?num='.$searchCount.'&ie=UTF-8&q=' . urlencode($keyword).'&uule='.$area;
 
         //URLからDOMを取得
         $html = file_get_html($urlStr);
@@ -70,8 +70,9 @@ class GoogleSearch
             $result['url'] = urldecode($link);
             $result['description'] = mb_convert_encoding($descr->plaintext, "UTF-8", "SJIS");
 
-            $resultChildList = $this->getChildResultList(urldecode($link));
-            $result['childList'] = $resultChildList;
+            // TODO 各サイトの検索・分析を一旦、コメントアウト
+//            $resultChildList = $this->getChildResultList(urldecode($link));
+//            $result['childList'] = $resultChildList;
             $result['rank'] = $i + 1;
 
             $resultList[] = $result;

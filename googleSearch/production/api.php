@@ -6,13 +6,24 @@ header('Content-Type: application/json');
 $query = $_POST['query'];
 $data = [];
 
-if ($query['method'] === 'getMovieList') {
+if ($query['method'] === 'search') {
 
     $googleSearch = new GoogleSearch();
     $keyword = $query['keyword'];
     $area = $query['area'];
+    $searchCount = $query['searchCount'];
 
-    $data = $googleSearch->search($keyword,$area);
+
+    $data = $googleSearch->search($keyword,$area,$searchCount);
+
+} else if ($query['method'] === 'bulkSearch') {
+
+    $googleSearch = new GoogleSearch();
+    $keyword = $query['keyword'];
+    $area = $query['area'];
+    $searchCount = $query['searchCount'];
+
+    $data = $googleSearch->search($keyword,$area,$searchCount);
 
 } else if ($query['method'] === 'getComment') {
     $googleSearch = new GoogleSearch();
