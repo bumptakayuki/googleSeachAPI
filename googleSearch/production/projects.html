@@ -249,12 +249,25 @@
                 キーワード:
                 <input type="text" style="width: 300px; display: inline " id="keyword" class="form-control">
                検索エリア
-                <select name="area" id="area">
+                <select name="area" id="area" class="js-example-basic-single" style="width: 100px; display: inline ">
                     <option value="w+CAIQIFISCdEIMeuyjBhgEXdmWzmy2Rzx">東京</option>
                     <option value="w+CAIQIFISCWUjexCecANgEVKzzujUIpYq">名古屋</option>
                     <option value="w+CAIQIFISCSmEhOmh7UE1EYOHOTaZcgr2">福岡</option>
-                    <option value="w%20CAIQIFISCYu1pkFxaeU0EZheWBb2r9gs&yv=2">那覇市</option>
+                    <option value="w%20CAIQIFISCYu1pkFxaeU0EZheWBb2r9gs&yv=2">沖縄</option>
+                    <option value="w%20CAIQIFISCYu1pkFxaeU0EZheWBb2r9gs&yv=2">埼玉</option>
+                    <option value="w+CAIQIFISCekBe0eNKhlgEWxSgKpnEtn-">北海道</option>
+                    <option value="w+CAIQIFISCYuIbJ8gWZ9fEY8Dzk9Wwzwc">京都</option>
+                    <option value="w+CAIQIFISCWEbH_kgdP9fETiVsTjCewpZ">大阪</option>
+                    <option value="w+CAIQIFISCddwzCpr6ABgEW1ZH4FI_5mj">那覇市</option>
+                    <option value="w+CAIQIFISCdMnhTcqxwZgEXLB6fYDYEfq">奈良</option>
+                    <option value="w+CAIQIFISCQOAFtHCWxg1EXDWWujy0a-N">鹿児島</option>
+                    <option value="w+CAIQIFISCUetLyC9m5tfEaP5AKafrgWp">青森</option>
+                    <option value="w+CAIQIFISCVVV8eKh0kE1EdrxHh9s1Asw">佐賀</option>
+                    <option value="w+CAIQIFISCS_V3G2BBCBgEVxG1tDBph80">福島</option>
+                    <option value="w+CAIQIFISCavUZ_vHVBhgEVYjJ0LQnPcR">神奈川</option>
                 </select>
+
+
                 取得件数：
                 <select name="searchCount" id="searchCount">
                     <option value="11" selected>10件</option>
@@ -314,6 +327,7 @@
     <div class="clearfix"></div>
 </footer>
 <!-- /footer content -->
+
 </div>
 </div>
 
@@ -359,8 +373,18 @@
 
 <script src="./js/papaparse.min.js"></script>
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".js-example-basic-single").select2();
+    });
+</script>
 
 <script>
+
+
     var createKeyword = function (csvFile) {
 
         d3.csv(csvFile,
