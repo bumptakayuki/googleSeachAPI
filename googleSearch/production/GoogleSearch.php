@@ -103,11 +103,15 @@ class GoogleSearch
             $description = $html->find("meta[name=description]");
             $resultChildList['description'] = $description[0]->content;
 
-            $linka = array();
-            $links = array();
+            $linka = [];
+            $links = [];
+
+            $linkList = [];
+
             foreach ($html->find('a') as $el) {
                 $linka[md5($el->href)]++;
                 $links[md5($el->href)] = $el->href;
+                $linkList[] = $el->href;
             }
             arsort($linka);
 
@@ -120,6 +124,9 @@ class GoogleSearch
 
                     $link = $matches[1];
 
+
+//                    die();
+
                     $outLickCount++;
                 } else {
                     $innerLickCount++;
@@ -127,11 +134,13 @@ class GoogleSearch
             }
             $resultChildList['outLickCount'] = $outLickCount;
             $resultChildList['innerLickCount'] = $innerLickCount;
+            $resultChildList['linkList'] = $linkList;
 
             $body = $html->find("body");
             $googleAnalysisKeyword = new GoogleAnalysisKeyword();
             if (!empty($body)) {
                 $wordList = $googleAnalysisKeyword->analysisKeyword($body[0]->plaintext);
+                $resultChildList['wordLength'] = strlen($body[0]->plaintext);
                 $resultChildList['wordList'] = $wordList;
                 $resultChildList['rank1'] = $wordList[1];
                 $resultChildList['rank2'] = $wordList[0];

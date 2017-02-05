@@ -251,7 +251,7 @@ $(function () {
                     + "<table id='datatable' class='table table-striped table-bordered dataTable no-footer'>"
                     + "<thead>"
                     + "<tr role='row' bgColor='gray' style='color: white'>"
-                    + "<th>検索キーワード</th><th>順位</th><th>タイトル</th><th>説明</th><th>URL</th>"
+                    + "<th>検索キーワード</th><th>順位</th><th>タイトル</th><th>説明</th><th>URL</th><th></th>"
                     + "</tr>"
                     + "</thead>"
                     + "<% _.each(response.searchList, function(searchResult) { %>"
@@ -261,6 +261,7 @@ $(function () {
                     + " <td><%= searchResult.title %> </td>"
                     + " <td><%= searchResult.description %> </td>"
                     + " <td><%= searchResult.url %> </td>"
+                    + " <td><button type='button' class='btn btn-success getComment'value='"+'<%= searchResult.url %>'+"'>分析する</button></td>"
                     + "</tr>"
                     + "<% }); %>"
                     + "<table>"
@@ -316,7 +317,8 @@ $(function () {
                             + "<table id='datatable' class='table table-striped table-bordered dataTable no-footer'>"
                             + "<thead>"
                             + "<tr role='row'>"
-                            + "<th>タイトル</th><th>ディスクリプション</th><th>内部リンク数</th><th>外部リンク数</th><th>キーワード１位</th><th>キーワード１位(出現回数)</th><th>キーワード２位</th><th>キーワード２位(出現回数)</th><th>キーワード３位</th><th>キーワード３位(出現回数)</th>"
+                            + "<th>タイトル</th><th>ディスクリプション</th><th>内部リンク数</th><th>外部リンク数</th><th>文字数</th><th>リンク先</th>" +
+                            //"<th>キーワード１位</th><th>キーワード１位(出現回数)</th><th>キーワード２位</th><th>キーワード２位(出現回数)</th><th>キーワード３位</th><th>キーワード３位(出現回数)</th>"
                             + "</tr>"
                             + "</thead>"
                             + "<tr>"
@@ -336,18 +338,25 @@ $(function () {
                                 //+ "<% if(!_.isEmpty(response.outLickCount)){ %>"
                             + " <td><%= response.outLickCount %> </td>"
                                 //+ "<% } %>"
-                            + " <td><%= response.rank1.word %> </td>"
-                            + " <td><%= response.rank1.count %> </td>"
-                            + " <td><%= response.rank2.word %> </td>"
-                            + " <td><%= response.rank2.count %> </td>"
-                            + " <td><%= response.rank3.word %> </td>"
-                            + " <td><%= response.rank3.count %> </td>"
+                            + " <td><%= response.wordLength %> </td>"
+                            + " <td>"
+                            + " <% _.each(response.linkList, function(link) { %>"
+                            + " <%= link %><br>"
+                            + "<% }); %> "
+                            + "</td>"
+
+                                //+ " <td><%= response.rank1.word %> </td>"
+                            //+ " <td><%= response.rank1.count %> </td>"
+                            //+ " <td><%= response.rank2.word %> </td>"
+                            //+ " <td><%= response.rank2.count %> </td>"
+                            //+ " <td><%= response.rank3.word %> </td>"
+                            //+ " <td><%= response.rank3.count %> </td>"
                             + "</tr>"
                             + "<table>"
                         );
                         $("#comment-area").html(compiled({response: response}));
 
-                        createKeyword('test.csv', response);
+                        //createKeyword('test.csv', response);
                     })
                     .fail(function (response) {
                         alert('コメントがありません。');
