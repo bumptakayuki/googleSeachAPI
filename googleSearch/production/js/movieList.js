@@ -230,10 +230,11 @@ $(function () {
             })
             // ・ステータスコードは正常で、dataTypeで定義したようにパース出来たとき
             .done(function (response) {
+                console.log(response);
 
-                window.resultList.push(['検索キーワード','順位','見出し','URL']);
-                _.each(response.searchList, function (elm, i) {
-                    window.resultList.push([response.searchKeyword,elm.rank, elm.title, elm.url]);
+                window.resultList.push(['検索キーワード','質問']);
+                _.each(response.questionList, function (elm, i) {
+                    window.resultList.push([response.searchKeyword,elm]);
                 });
 
                 $('#chart').empty();
@@ -242,7 +243,7 @@ $(function () {
 
                 // テンプレートを定義
                 var compiled = _.template(
-                    "<div class='row tile_count'><div class='col-md-6 col-sm-6 col-xs-6 tile_stats_count'> <span class='count_top'><i class='fa fa-user'></i> Total Count</span> "
+                    "<div class='row tile_count'><div class='col-md-6 col-sm-6 col-xs-6 tile_stats_count'> "
                     + "<div class='count'><%= response.totalCount %></div>"
                     + "<span class='count_bottom'> </div> <div class='col-md-2 col-sm-4 col-xs-6 tile_stats_count'>"
                     + "<span class='count_bottom'></div>"
@@ -251,17 +252,17 @@ $(function () {
                     + "<table id='datatable' class='table table-striped table-bordered dataTable no-footer'>"
                     + "<thead>"
                     + "<tr role='row' bgColor='gray' style='color: white'>"
-                    + "<th>検索キーワード</th><th>順位</th><th>タイトル</th><th>説明</th><th>URL</th><th></th>"
+                    + "<th>検索キーワード</th><th>質問</th>"
                     + "</tr>"
                     + "</thead>"
-                    + "<% _.each(response.searchList, function(searchResult) { %>"
+                    + "<% _.each(response.questionList, function(question) { %>"
                     + "<tr>"
                     + " <td width='140'><%= response.searchKeyword %> </td>"
-                    + " <td><%= searchResult.rank %> </td>"
-                    + " <td><%= searchResult.title %> </td>"
-                    + " <td><%= searchResult.description %> </td>"
-                    + " <td><%= searchResult.url %> </td>"
-                    + " <td><button type='button' class='btn btn-success getComment'value='"+'<%= searchResult.url %>'+"'>分析する</button></td>"
+                    + " <td><%= question %> </td>"
+                    //+ " <td><%= searchResult.title %> </td>"
+                    //+ " <td><%= searchResult.description %> </td>"
+                    //+ " <td><%= searchResult.url %> </td>"
+                    //+ " <td><button type='button' class='btn btn-success getComment'value='"+'<%= searchResult.url %>'+"'>分析する</button></td>"
                     + "</tr>"
                     + "<% }); %>"
                     + "<table>"

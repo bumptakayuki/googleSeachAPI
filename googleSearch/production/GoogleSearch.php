@@ -1,6 +1,7 @@
 <?php
 require_once '../simple_html_dom.php';
 require_once './GoogleAnalysisKeyword.php';
+require_once "./phpQuery-onefile.php";
 
 /**
  * Google検索を行うクラス
@@ -16,21 +17,63 @@ class GoogleSearch
      */
     public function search($keyword,$area,$searchCount)
     {
+        $resultList = [];
+
         //文字化け対策
         mb_language('Japanese');
 
         //検索アドレスと件数の指定
-        $urlStr = 'http://www.google.co.jp/search?num='.$searchCount.'&ie=UTF-8&q=' . urlencode($keyword).'&uule='.$area;
+      $urlStr = 'http://chiebukuro.search.yahoo.co.jp/search?p=' .$keyword;
 
-        //URLからDOMを取得
-        $html = file_get_html($urlStr);
 
-        //検索結果のタイトル部分
-        $searchList = $this->getResultList($html);
+        $content = http_build_query([]);
+        $content_length = strlen($content);
+        $options = array('http' => array(
+            'method' => 'GET',
+            'header' => "Content-Type: application/x-www-form-urlencoded\r\n"
+                . "Content-Length: $content_length",
+            'content' => $content));
 
-        $resultList['totalCount'] = $searchList['totalCount'];
-        unset($searchList['totalCount']);
-        $resultList['searchList'] = $searchList;
+        $html = file_get_contents(
+            'http://chiebukuro.search.yahoo.co.jp/search?p=' .$keyword,
+            false, stream_context_create($options));
+
+
+        $doc = phpQuery::newDocumentFile('http://chiebukuro.search.yahoo.co.jp/search?p=' .$keyword);
+
+
+        $hrefList = [];
+
+        // h1タグを片っ端からぶん回す
+        foreach($doc[".KSsin"] as $val) {
+            // 連続実行すると怒られちゃうのでとりあえず5秒待機
+            sleep(1);
+            $href = pq($val)->find('a')->attr('href');
+            $hrefList[]=$href;
+            // pq()メソッドでオブジェクトとして再設定しつつさらに下ってhrefを取得
+        }
+
+        $questionList = [];
+        foreach ($hrefList as $href){
+
+            $doc = phpQuery::newDocumentFile($href);
+
+            $questionText = $doc['.mdPstd.mdPstdQstn.sttsRslvd.clrfx']->find('p')->text();
+            $excludeList = ['シェア','ツイート', 'はてブ', '知恵コレ','違反報告'];
+
+            foreach($excludeList as $exclude){
+                $questionText = preg_replace('/'.$exclude.'/','',$questionText);
+            }
+
+            $questionText  = preg_replace("/( |　)/", "", $questionText );
+            // 改行、タブをスペースへ
+            $questionText = preg_replace('/[\n\r\t]/', '', $questionText);
+            // 複数スペースを一つへ
+            $questionText = preg_replace('/\s(?=\s)/', '', $questionText);
+
+            $questionList[] = $questionText;
+        }
+        $resultList['questionList'] = $questionList;
         $resultList['searchKeyword'] = $keyword;
 
         return $resultList;
