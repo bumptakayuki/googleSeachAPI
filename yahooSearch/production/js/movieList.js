@@ -221,7 +221,7 @@ $(function () {
     var executeSearch = function (query) {
 
         $.ajax({
-                url: '/googleSeachAPI/yahooSearch/production/api.php',
+                url: '/yahooSearch/googleSeachAPI/yahooSearch/production/api.php',
                 type: 'post', // getかpostを指定(デフォルトは前者)
                 dataType: 'json', // 「json」を指定するとresponseがJSONとしてパースされたオブジェクトになる
                 data: { // 送信データを指定(getの場合は自動的にurlの後ろにクエリとして付加される)
