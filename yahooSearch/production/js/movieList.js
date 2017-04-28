@@ -108,7 +108,7 @@ $(function () {
         var query = {
             keyword: $('#keyword').val(),
             area: $('#area').val(),
-            searchCount: $('#searchCount').val(),
+            page: $('#page').val(),
             method: 'search'
         };
         window.resultList=[];
@@ -123,7 +123,7 @@ $(function () {
         var query = {
             //keyword: $('#keyword').val(),
             area: $('#area').val(),
-            searchCount: $('#searchCount').val(),
+            page: $('#page').val(),
             method: 'bulkSearch'
         };
 
@@ -222,6 +222,8 @@ $(function () {
 
         $.ajax({
                 url: '/yahooSearch/googleSeachAPI/yahooSearch/production/api.php',
+                //url: '/googleSeachAPI/yahooSearch/production/api.php',
+
                 type: 'post', // getかpostを指定(デフォルトは前者)
                 dataType: 'json', // 「json」を指定するとresponseがJSONとしてパースされたオブジェクトになる
                 data: { // 送信データを指定(getの場合は自動的にurlの後ろにクエリとして付加される)

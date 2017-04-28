@@ -10,11 +10,9 @@ if ($query['method'] === 'search') {
 
     $googleSearch = new GoogleSearch();
     $keyword = $query['keyword'];
-    $area = $query['area'];
-    $searchCount = $query['searchCount'];
+    $page = $query['page'];
 
-
-    $data = $googleSearch->search($keyword,$area,$searchCount);
+    $data = $googleSearch->search($keyword,$page);
 
 } else if ($query['method'] === 'bulkSearch') {
 
