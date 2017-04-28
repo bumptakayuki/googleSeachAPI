@@ -48,6 +48,8 @@ class GoogleSearch
             // pq()メソッドでオブジェクトとして再設定しつつさらに下ってhrefを取得
         }
 
+        var_dump($hrefList);
+        die();
         $questionList = [];
         foreach ($hrefList as $page => $href) {
             $doc = phpQuery::newDocumentFile($href);
