@@ -84,6 +84,9 @@ class GoogleSearch
 
                 $questionList[] = $questionText;
             }
+//            if($page == 5){
+                break;
+//            }
         }
         $resultList['questionList'] = $questionList;
         $resultList['searchKeyword'] = $keyword;
