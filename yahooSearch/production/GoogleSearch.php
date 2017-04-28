@@ -32,37 +32,20 @@ class GoogleSearch
         $content = http_build_query([]);
         $content_length = strlen($content);
 
-        $doc = phpQuery::newDocumentFile('http://chiebukuro.search.yahoo.co.jp/search?p=' . $keyword.'&b=21');
+        $doc = phpQuery::newDocumentFile('http://chiebukuro.search.yahoo.co.jp/search?p=' . $keyword.'&b='.$page);
 
-        $page = 10;
-        $hrefList = [];
-        for ($i = 0; $i <= 2; $i++) {
-            $tempPage = $page * $i +1;
-            $href = 'http://chiebukuro.search.yahoo.co.jp/search?p=' . $keyword.'&b=' . $tempPage;
-            $hrefList[$i] = $href;
-        }
-
-
+//        $page = 10;
 //        $hrefList = [];
-
-
-//        $pageCount = 1;
-
-//        foreach ($doc["#Sp1 a"] as $val) {
-//            // 連続実行すると怒られちゃうのでとりあえず5秒待機
-//            sleep(1);
-//            $href = pq($val)->attr('href');
-//            $hrefList[$pageCount] = $href;
-//
-//            $pageCount++;
-//            // pq()メソッドでオブジェクトとして再設定しつつさらに下ってhrefを取得
+//        for ($i = 0; $i <= 2; $i++) {
+//            $tempPage = $page * $i +1;
+//            $href = 'http://chiebukuro.search.yahoo.co.jp/search?p=' . $keyword.'&b=' . $tempPage;
+//            $hrefList[$i] = $href;
 //        }
 
-//        var_dump($hrefList);
-//        die();
+
         $questionList = [];
-        foreach ($hrefList as $page => $href) {
-            $doc = phpQuery::newDocumentFile($href);
+//        foreach ($hrefList as $page => $href) {
+//            $doc = phpQuery::newDocumentFile($href);
 
             foreach ($doc[".KSsin"] as $val) {
                 // 連続実行すると怒られちゃうのでとりあえず5秒待機
@@ -96,10 +79,10 @@ class GoogleSearch
 
                 $questionList[] = $questionText;
             }
-            if($page == 5){
-                break;
-            }
-        }
+//            if($page == 5){
+//                break;
+//            }
+//        }
         $resultList['questionList'] = $questionList;
         $resultList['searchKeyword'] = $keyword;
 
