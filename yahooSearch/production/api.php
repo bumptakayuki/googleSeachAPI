@@ -18,15 +18,9 @@ if ($query['method'] === 'search') {
 
     $googleSearch = new GoogleSearch();
     $keyword = $query['keyword'];
-    $area = $query['area'];
-    $searchCount = $query['searchCount'];
+    $page = $query['page'];
 
-    $data = $googleSearch->search($keyword,$area,$searchCount);
-
-} else if ($query['method'] === 'getComment') {
-    $googleSearch = new GoogleSearch();
-    $url = $query['url'];
-    $data = $googleSearch->getChildResultList($url);
+    $data = $googleSearch->search($keyword,$page);
 
 }
 

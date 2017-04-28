@@ -18,8 +18,6 @@ class GoogleSearch
     public function search($keyword, $page)
     {
 
-        ini_set('memory_limit', '512M');
-
         $resultList = [];
 
         //文字化け対策

@@ -11,6 +11,7 @@ $(function () {
             complete: function(results) {
 
                 var keywordList = [];
+                var pageList = [];
                 _.each(results.data, function(obj) {
                     keywordList.push(obj.keyword);
                  });
@@ -122,14 +123,17 @@ $(function () {
 
         var query = {
             //keyword: $('#keyword').val(),
-            area: $('#area').val(),
-            page: $('#page').val(),
+            //page: $('#page').val(),
             method: 'bulkSearch'
         };
 
         _.each(window.keywordList, function(keyword) {
-            query.keyword=keyword;
-            executeSearch(query);
+            for($i = 0; $i<10; $i++){
+                query.keyword = keyword;
+                query.page = $i * 10 + 1;
+
+                executeSearch(query);
+            }
         });
 
     });
