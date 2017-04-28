@@ -34,7 +34,7 @@ class GoogleSearch
 
         $page = 10;
         $hrefList = [];
-        for ($i = 0; $i <= 1; $i++) {
+        for ($i = 0; $i <= 2; $i++) {
             $tempPage = $page * $i +1;
             $href = 'http://chiebukuro.search.yahoo.co.jp/search?p=' . $keyword.'&b=' . $tempPage;
             $hrefList[$i] = $href;
